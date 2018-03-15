@@ -17,6 +17,97 @@ block append head
 block append bodyscripts
   script.
     var copterStream = new NodecopterStream(document.querySelector('#dronestream'));
+    var canvas=document.querySelector("canvas");
+    var groupname="Shristi_from_above";
+    var identifyRoomCode="okwlskmdwsijfhrbgbvjevdbhfdhfbwsndksmlxkm8448";
+    var socket_streamer=io.connect("https://live.sdslabs.co:9090");
+    var pc=null;    //each element of the array represents first node of a sin gle linked list
+    var pc_receiverEnd;
+    var video = document.querySelector('#video');
+    var pcConfig = {
+      'iceServers': [{
+        'urls': ['stun:'+'https://live.sdslabs.co:8443','stun:stun.l.google.com:19302']
+      }]
+    };
+
+      setTimeout(function(){
+      var channelStream;
+      channelStream=canvas.captureStream(60);    
+      video.src= window.URL.createObjectURL(channelStream);
+      socket_streamer.emit('joined_streamer',identifyRoomCode);
+      socket_streamer.emit('ask_clients_to_join_again',identifyRoomCode);
+      },5000);
+      function message_callback(message){
+      console.log('message');
+      console.log(message);
+ 
+      if(message=='startService'){
+         console.log("starting service and sending signal to client");
+       socket_streamer.emit('message_forwarder',{identifyRoomCode:identifyRoomCode,data:{type:"startService",groupname:groupname}});
+        maybeStart();
+      } else
+      if (message.type === 'candidate' ) {
+    
+    var candidate = new RTCIceCandidate({
+      sdpMLineIndex: message.label,
+      candidate: message.candidate
+    });
+    pc.addIceCandidate(candidate);}
+    else if (message.type === 'answer') {
+      
+      pc.setRemoteDescription(new RTCSessionDescription(message));
+    } else {
+      console.log('serious problem here , message not identified!');
+    }
+    }
+    socket_streamer.on('message_streamer',message_callback);
+
+
+    function maybeStart(){
+    console.log("may be start called now creating peer connection");
+    
+
+
+    if(pc) {pc.close();pc=null;console.log("Closing current connection and starting a new one");}
+    try{
+    pc=new RTCPeerConnection(pcConfig);
+    pc.onicecandidate=handler_IceCandidate;  //no onaddstream handler
+    console.log("created peer connection");
+    pc.addStream(channelStream);
+    //sending offer to client
+    console.log("creating offer AAAAAAAAAAAAAAAA");
+    pc.createOffer(setLocalAndSendMessage, function(event){console.log("cannont create offer:"+event);});
+    }
+    catch(e){
+    console.log('Failed to create PeerConnection, exception: ' + e.message);
+    alert('Cannot create RTCPeerConnection object.');
+    }
+    }
+    function handler_IceCandidate(event){
+    console.log('icecandidate event: ', event);                         
+    //sending info about network candidate to first client
+    if (event.candidate) {
+    socket_streamer.emit('message_forwarder',{identifyRoomCode:identifyRoomCode,data:{
+      type: 'candidate',
+      label: event.candidate.sdpMLineIndex,
+      id: event.candidate.sdpMid,
+      candidate: event.candidate.candidate
+    }});
+    } else {
+    console.log('End of candidates.');
+    }
+    }
+    function setLocalAndSendMessage(sessionDescription){
+    if(pc)
+    pc.setLocalDescription(sessionDescription);
+    console.log('setLocalAndSendMessage sending message', sessionDescription);
+    socket_streamer.emit('message_forwarder',{identifyRoomCode:identifyRoomCode,data:sessionDescription});                  
+    }
+
+
+
+
 
 block content
   div#dronestream(width=640, height=360)
+  video#video(autoplay)
