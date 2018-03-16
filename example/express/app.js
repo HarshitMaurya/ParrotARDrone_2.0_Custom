@@ -27,70 +27,118 @@ app.configure('development', function () {
     app.locals.pretty = true;
 });
 app.get('/takeoff', (req, res) => {
-  client.takeoff()
+  client.takeoff();
+  console.log("Hey");
 })
 
 app.get('/land', (req, res) => {
-  client.land()
+  client.land();
+  console.log("Hey");
 })
 
+/*
+function executeDroneFunction(func){
+  switch(func){
+    case 1: client.left(10);
+      break;
+    case 2: client.up(10);
+      break;
+    case 3: client.right(10);
+      break;
+    case 4: client.down(10);
+      break;
+    case 5: client.counterClockwise(10);
+      break;
+    case 6: client.leftSpeed(10);
+      break;
+    case 7: client.leftSpeed(10);
+      break;
+    case 8: client.leftSpeed(10);
+      break;
+    case 9: client.leftSpeed(10);
+      break;
+    case 10: client.leftSpeed(10);
+      break;
+  }
+}
+socket_streamer.on('access_server',executeDroneFunction);
 
+
+
+/**/
 app.get('/', routes.index);
 app.get('/up/:upSpeed', (req, res) => {
-  upSpeed += req.params.upSpeed
-  client.up(upSpeed)
+  upSpeed += Number(req.params.upSpeed);
+  client.up(upSpeed);
+  console.log("Hey");
   res.status(200)
 });
 
 app.get('/down/:upSpeed', (req, res) => {
-  upSpeed -= req.params.upSpeed
-  client.down(upSpeed)
+  upSpeed -= Number(req.params.upSpeed);
+  console.log("Hey");
+  client.down(upSpeed);
   res.status(200)
 });
 
 app.get('/clockwise/:speed',(req,res) => {
-  clockwiseSpeed+=req.params.speed;
+  clockwiseSpeed+=Number(req.params.speed);
   client.clockwise(clockwiseSpeed);
+  console.log("Hey");
   res.status(200);
 });
 
 app.get('/counterClockwise/:speed',(req,res) => {
-  clockwiseSpeed-=req.params.speed;
+  clockwiseSpeed-=Number(req.params.speed);
   client.counterClockwise(counterClockwise);
+  console.log("Hey");
   res.status(200);
 
 });
 
 app.get('/front/:speed',(req,res) => {
-  frontSpeed+=req.params.speed;
+  frontSpeed+=Number(req.params.speed);
   client.front(frontSpeed);
+  console.log("maurya");
   res.status(200);
 
 });
-app.get('/back/:speed',(req,res) => {
-  frontSpeed-=req.params.speed;
-  client.back(frontSpeed);
-  res.status(200);
 
+app.get('/back/:speed',(req,res) => {
+  frontSpeed-=Number(req.params.speed);
+  client.back(frontSpeed);
+  console.log("maurya");
+  res.status(200);
 });
 
 app.get('/left/:speed',(req,res) => {
-  leftSpeed+=req.params.speed;
+  leftSpeed+=Number(req.params.speed);
   client.left(leftSpeed);
+  console.log("maurya");
   res.status(200);
 
 });
 app.get('/right/:speed',(req,res) => {
-  leftSpeed-=req.params.speed;
+  leftSpeed-=Number(req.params.speed);
   client.right(leftSpeed);
+  console.log("maurya");
   res.status(200);
 
 });
-app.get('/calibrate',(req,res) => {
-  client.calibrate(0);
+app.get('/stop',(req,res) => {
+  client.stop();
   res.status(200);
-
+  console.log("maurya");
 });
+
+app.get('/camera/:id', (req, res) => {
+  client.config('video:video_channel', req.params.id)
+  res.status(200);
+})
+
+app.get('/controller', (req, res) => {
+  res.sendfile(__dirname + '/views/controller.html')
+})
 
 /*
  * Important:

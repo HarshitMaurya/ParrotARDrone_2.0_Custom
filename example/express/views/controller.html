@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+<script src="/jquery.js"></script>
+
+</head>
+<body>
+<button onclick="Api('land');" value="Land">LAND</button>
+<button onclick="Api('takeoff');" value="Takeoff">Takeoff</button>
+<button onclick="Api('stop');" value="Stop" >Stop</button>
+<button onclick="Api('camera/0');">Front Camera</button>
+<button onclick="Api('camera/3');">Bottom Camera</button>
+</body>
+</html>
+<script >
+    $(document).keydown(function(e) {
+    switch(e.which) {
+        case 37: Api("left/10");
+        break;
+
+        case 38: Api("up/10");
+        break;
+
+        case 39: Api("right/10");
+        break;
+
+        case 40: Api("down/10");
+        break;
+        
+        case 65: Api("counterClockwise/10");
+        break;
+
+        case 87: Api("front/10");
+        break;
+
+        case 68: Api("clockwise/10");
+        break;
+
+        case 83: Api("back/10");
+        break;
+
+        case 13: Api("takeoff");
+        break;
+
+        case 32: Api("land");
+        break;
+
+        case 16: Api("stop");
+        break;
+
+        
+        default: break; // exit this handler for other keys
+    }
+    e.preventDefault(); // prevent the default action (scroll / move caret)
+});
+function Api(str){
+    console.log(str)
+    fetch('http://localhost:3000/'+str).then(x => { 
+        console.log(str, x);
+    }).then(y => {
+        console.log(str, y);
+    });
+}
+</script>
