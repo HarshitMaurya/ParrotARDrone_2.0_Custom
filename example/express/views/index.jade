@@ -26,17 +26,17 @@ block append bodyscripts
     var video = document.querySelector('#video');
     var pcConfig = {
       'iceServers': [{
-        'urls': ['stun:'+'https://live.sdslabs.co:8443','stun:stun.l.google.com:19302']
+        'urls': ['stun:live.sdslabs.co:8443','stun:stun.l.google.com:19302']
       }]
     };
 
-      setTimeout(function(){
+
       var channelStream;
       channelStream=canvas.captureStream(60);    
       video.src= window.URL.createObjectURL(channelStream);
       socket_streamer.emit('joined_streamer',identifyRoomCode);
       socket_streamer.emit('ask_clients_to_join_again',identifyRoomCode);
-      },5000);
+
       function message_callback(message){
       console.log('message');
       console.log(message);

@@ -27,13 +27,14 @@ app.configure('development', function () {
     app.locals.pretty = true;
 });
 app.get('/takeoff', (req, res) => {
-  client.takeoff();
-  console.log("Hey");
+  client.takeoff()
+  res.status(200).json({ message: '.' })    
+  
 })
 
 app.get('/land', (req, res) => {
   client.land();
-  console.log("Hey");
+  res.status(200).json({ message: '.' })      
 })
 
 /*
@@ -66,74 +67,88 @@ socket_streamer.on('access_server',executeDroneFunction);
 
 
 /**/
+
+var upperLimit = 1;
+var lowerLimit = 0;
+
+
 app.get('/', routes.index);
 app.get('/up/:upSpeed', (req, res) => {
-  upSpeed += Number(req.params.upSpeed);
-  client.up(upSpeed);
-  console.log("Hey");
-  res.status(200)
+  if (upSpeed <= upperLimit) {
+    upSpeed += Number(req.params.upSpeed);
+    client.up(upSpeed);
+  }
+  
+  res.status(200).json({ message: '.' })
 });
 
 app.get('/down/:upSpeed', (req, res) => {
+  if(upSpeed >= lowerLimit){
   upSpeed -= Number(req.params.upSpeed);
-  console.log("Hey");
+  
   client.down(upSpeed);
-  res.status(200)
+  }
+  res.status(200).json({ message: '.' })
 });
 
 app.get('/clockwise/:speed',(req,res) => {
+if(clockwiseSpeed <= upperLimit){
   clockwiseSpeed+=Number(req.params.speed);
   client.clockwise(clockwiseSpeed);
-  console.log("Hey");
-  res.status(200);
+  }
+  res.status(200).json({ message: '.' });
 });
 
 app.get('/counterClockwise/:speed',(req,res) => {
+  if(clockwiseSpeed >= lowerLimit){
   clockwiseSpeed-=Number(req.params.speed);
-  client.counterClockwise(counterClockwise);
-  console.log("Hey");
-  res.status(200);
+  client.counterClockwise(clockwiseSpeed);
+  }
+  res.status(200).json({ message: '.' });
 
 });
 
 app.get('/front/:speed',(req,res) => {
+  if(frontSpeed <= upperLimit){
   frontSpeed+=Number(req.params.speed);
   client.front(frontSpeed);
-  console.log("maurya");
-  res.status(200);
+}
+  res.status(200).json({ message: '.' });
 
 });
 
 app.get('/back/:speed',(req,res) => {
+  if(frontSpeed >= lowerLimit){
   frontSpeed-=Number(req.params.speed);
   client.back(frontSpeed);
-  console.log("maurya");
-  res.status(200);
+}
+  res.status(200).json({ message: '.' });
 });
 
 app.get('/left/:speed',(req,res) => {
+  if(leftSpeed <= upperLimit){
   leftSpeed+=Number(req.params.speed);
   client.left(leftSpeed);
-  console.log("maurya");
-  res.status(200);
-
+}
+  res.status(200).json({ message: '.' });
 });
+
 app.get('/right/:speed',(req,res) => {
+  if(leftSpeed >= lowerLimit){
   leftSpeed-=Number(req.params.speed);
   client.right(leftSpeed);
-  console.log("maurya");
-  res.status(200);
-
+}
+  res.status(200).json({ message: '.' });
 });
+
 app.get('/stop',(req,res) => {
   client.stop();
-  res.status(200);
-  console.log("maurya");
+  res.status(200).json({ message: '.' });
 });
 
 app.get('/camera/:id', (req, res) => {
-  client.config('video:video_channel', req.params.id)
-  res.status(200);
+  client.config('video:video_channel', Number(req.params.id))
+  res.status(200).json({ message: '.' });
 })
 
 app.get('/controller', (req, res) => {
