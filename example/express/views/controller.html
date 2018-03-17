@@ -11,33 +11,34 @@
 <button onclick="Api('stop');">Stop</button>
 <button onclick="Api('camera/0');">Front Camera</button>
 <button onclick="Api('camera/3');">Bottom Camera</button>
+<div id="batteryStatus"></div>
 </body>
 </html>
 <script >
     $(document).keydown(function(e) {
     switch(e.which) {
-        case 37: Api("left/0.1");
+        case 37: Api("left/0.01");
         break;
 
-        case 38: Api("up/0.1");
+        case 38: Api("up/0.01");
         break;
 
-        case 39: Api("right/0.1");
+        case 39: Api("right/0.01");
         break;
 
-        case 40: Api("down/0.1");
+        case 40: Api("down/0.01");
         break;
         
-        case 65: Api("counterClockwise/0.1");
+        case 65: Api("counterClockwise/0.01");
         break;
 
-        case 87: Api("front/0.1");
+        case 87: Api("front/0.01");
         break;
 
-        case 68: Api("clockwise/0.1");
+        case 68: Api("clockwise/0.01");
         break;
 
-        case 83: Api("back/0.1");
+        case 83: Api("back/0.01");
         break;
 
         case 13: Api("takeoff");
@@ -55,12 +56,19 @@
     e.preventDefault(); // prevent the default action (scroll / move caret)
 });
 $(document).keyup(function(e) {
-    console.log('abc');
-
     Api("stop");    
 });
+
+
+setInterval (function() { 
+    fetch('http://localhost:3000/battery').then(function(response) {
+    console.log (response.json().then(function(data) {
+        console.log(data);}))
+    });
+    $("#batteryStatus").html(fetch('http://localhost:3000/battery'));
+}, 5000);
+
 function Api(str){
-    console.log(str)
     fetch('http://localhost:3000/'+str).then(x => { 
         console.log(str, x.url);
     })
