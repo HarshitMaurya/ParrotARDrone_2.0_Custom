@@ -1,17 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+	<title>Controller</title>
+    <style>
+    </style>
 <script src="jquery.js"></script>
+
 
 </head>
 <body>
-<button onclick="Api('land');">LAND</button>
-<button onclick="Api('takeoff');">Takeoff</button>
-<button onclick="Api('stop');">Stop</button>
-<button onclick="Api('camera/0');">Front Camera</button>
-<button onclick="Api('camera/3');">Bottom Camera</button>
-<div id="batteryStatus"></div>
+<button style="padding: 2em" onclick="Api('land');">LAND</button>
+<button style="padding: 2em" onclick="Api('takeoff');">Takeoff</button>
+<button style="padding: 2em" onclick="Api('stop');">Stop</button>
+<button style="padding: 2em" onclick="Api('camera/0');">Front Camera</button>
+<button style="padding: 2em" onclick="Api('camera/3');">Bottom Camera</button>
+<br>
+<br>
+<br>
+<br>
+<div id="batteryStatus" style="font-padding: 2em50px"></div>
 </body>
 </html>
 <script >
@@ -60,13 +67,15 @@ $(document).keyup(function(e) {
 });
 
 
-setInterval (function() { 
-    fetch('http://localhost:3000/battery').then(function(response) {
-    console.log (response.json().then(function(data) {
-        console.log(data);}))
-    });
-    $("#batteryStatus").html(fetch('http://localhost:3000/battery'));
+setInterval ( function() {
+                fetch('http://localhost:3000/battery').then(function(response) {
+                        console.log (response.json().then(function(data) {
+                                $("#batteryStatus").html(data.battery);
+                }))
+            });
 }, 5000);
+
+
 
 function Api(str){
     fetch('http://localhost:3000/'+str).then(x => { 
